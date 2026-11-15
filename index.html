@@ -235,13 +235,9 @@ const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(
 const DEFAULT = {
   currency: '$',
   categories: [
-    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:350},
-    {id:'viandes', name:'Viandes', icon:'🥩', color:'#ff453a', budget:250},
-    {id:'legumes', name:'Légumes', icon:'🌶️', color:'#22d55b', budget:140},
-    {id:'yoyo', name:'Yoyo Hygiène', icon:'🍼', color:'#f5d142', budget:200},
-    {id:'anouar', name:'Anouar', icon:'⭐', color:'#2f80ed', budget:100},
-    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:60},
-    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:200}
+    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:0},
+    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:0},
+    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:0}
   ],
   purchases: []
 };
