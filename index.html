@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#090b10">
 <meta name="robots" content="noindex, nofollow">
 <link rel="manifest" href="manifest.json">
@@ -83,6 +83,17 @@ main::-webkit-scrollbar{display:none}
 .bar i.over{background:var(--red)}
 .bm small{color:var(--muted);font-size:12.5px}
 
+.item,.bc{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.bt b em{font-style:normal;font-weight:500;font-size:11.5px;color:var(--muted);margin-left:8px}
+main.fit{display:flex;flex-direction:column;gap:6px;padding:8px 16px 92px}
+.fit .ringbox{flex:none;padding:12px 16px;gap:16px;margin:0}
+.fit .ring{width:84px;height:84px}
+.fit .ring span{font-size:17px}
+.fit .rb .big{font-size:28px}
+.fit .rb .sub{margin-top:3px}
+.fit .bc{flex:1 1 0;min-height:44px;max-height:74px;margin:0;padding:6px 12px;align-items:center;gap:11px}
+.fit .chip{width:34px;height:34px;font-size:18px;border-radius:12px}
+.fit .bar{margin:6px 0 0;height:7px}
 /* anims (only on tab switch) */
 @keyframes rise{from{opacity:0;transform:translateY(12px)}}
 @keyframes ringIn{from{stroke-dashoffset:276.46}}
@@ -111,14 +122,14 @@ main::-webkit-scrollbar{display:none}
 .sheet::before{content:"";display:block;width:42px;height:5px;border-radius:3px;background:#ffffff30;margin:0 auto 14px}
 .sh-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .sh-h h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.4px}
-.amount{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0 10px}
+.amount{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0 8px;flex:none}
 .amount span{font-size:30px;font-weight:700;color:var(--muted)}
-.amount input{width:62%;background:none;border:0;outline:0;color:var(--text);font-size:44px;font-weight:800;letter-spacing:-2px;text-align:left;padding:0}
+.amount input{width:62%;background:none;border:0;outline:0;color:var(--text);font-size:40px;font-weight:800;letter-spacing:-2px;text-align:left;padding:0}
 .amount input::placeholder{color:#ffffff26}
 .amount input{-moz-appearance:textfield;appearance:textfield}
 .amount input::-webkit-outer-spin-button,.amount input::-webkit-inner-spin-button,.ed input::-webkit-outer-spin-button,.ed input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .cats{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-#ovBuy .sheet{height:min(100vh,760px);height:min(100dvh,760px);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding-top:8px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+#ovBuy .sheet{height:min(100%,760px);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding-top:8px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
 #ovBuy .sheet::before{margin-bottom:8px}
 #ovBuy .sh-h{margin-bottom:0}
 #ovBuy .fi{margin-bottom:0}
@@ -175,9 +186,9 @@ input[type=date]{color-scheme:dark}
 <!-- Add / edit purchase -->
 <div class="overlay" id="ovBuy"><div class="sheet">
   <div class="sh-h"><h2 id="buyTitle">Nouvel achat</h2><div class="hd"><button class="ib dl" id="buyDel" style="display:none" aria-label="Supprimer"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div></div>
-  <div class="amount"><span id="cur1">$</span><input id="price" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
   <div class="cats" id="catBtns"></div>
-  <input class="fi" id="note" type="text" placeholder="Note (facultatif)">
+  <div class="amount"><span id="cur1">$</span><input id="price" type="number" inputmode="decimal" enterkeyhint="done" step="0.01" min="0" placeholder="0"></div>
+  <input class="fi" id="note" type="text" enterkeyhint="done" placeholder="Note (facultatif)">
   <button class="cta" id="buySave">Enregistrer</button>
 </div></div>
 
@@ -205,6 +216,14 @@ input[type=date]{color-scheme:dark}
     <button class="btn wide" id="aUp">Créer le compte</button>
   </div>
   <div id="outBox"><button class="btn del wide" id="aOut">Se déconnecter</button></div>
+</div></div>
+
+<!-- Long-press action sheet -->
+<div class="overlay" id="ovAct"><div class="sheet">
+  <div class="sh-h"><h2 id="actTitle"></h2><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div>
+  <p class="hint" id="actSub" style="margin-bottom:6px"></p>
+  <button class="btn del wide" id="actDel">🗑 Supprimer</button>
+  <button class="btn wide" data-close>Annuler</button>
 </div></div>
 
 <div class="toast" id="toast"></div>
@@ -336,6 +355,39 @@ function dayLabel(d){
   return dt.toLocaleDateString('fr-FR', sameYear ? { weekday:'long', day:'numeric', month:'long' } : { day:'numeric', month:'long', year:'numeric' });
 }
 
+function longPress(el, cb){
+  let t = null, fired = false, sx = 0, sy = 0;
+  const pt = e => (e.touches && e.touches[0]) || e;
+  const start = e => { fired = false; const p = pt(e); sx = p.clientX; sy = p.clientY; clearTimeout(t); t = setTimeout(() => { fired = true; buzz(); cb(); }, 480); };
+  const cancel = () => clearTimeout(t);
+  const move = e => { const p = pt(e); if (Math.abs(p.clientX - sx) > 10 || Math.abs(p.clientY - sy) > 10) cancel(); };
+  el.addEventListener('touchstart', start, { passive: true });
+  el.addEventListener('touchmove', move, { passive: true });
+  ['touchend', 'touchcancel'].forEach(ev => el.addEventListener(ev, cancel));
+  el.addEventListener('mousedown', start); el.addEventListener('mouseup', cancel); el.addEventListener('mouseleave', cancel);
+  el.addEventListener('contextmenu', e => e.preventDefault());
+  el.addEventListener('click', e => { if (fired) { e.stopImmediatePropagation(); e.preventDefault(); fired = false; } }, true);
+}
+let actDelete = null;
+function askDelete(title, sub, fn){ $('#actTitle').textContent = title; $('#actSub').textContent = sub; actDelete = fn; show('#ovAct'); }
+$('#actDel').onclick = () => { hide('#ovAct'); const f = actDelete; actDelete = null; if (f) f(); };
+function askDelPurchase(id){
+  const p = S.purchases.find(x => x.id === id); if (!p) return;
+  const c = catOf(p.cat);
+  askDelete(c.icon + ' ' + c.name + ' · ' + fmt(p.price), p.note || dayLabel(p.date), () => {
+    S.purchases = S.purchases.filter(x => x.id !== id); save(); removePurchases([id]); render(); toast('Supprimé');
+  });
+}
+function askDelCategory(id){
+  const c = S.categories.find(x => x.id === id); if (!c) return;
+  const ids = S.purchases.filter(p => p.cat === id).map(p => p.id);
+  askDelete(c.icon + ' ' + c.name, ids.length ? `Les ${ids.length} achat(s) de cette catégorie seront aussi supprimés.` : 'Supprimer cette catégorie ?', () => {
+    S.purchases = S.purchases.filter(p => p.cat !== id);
+    S.categories = S.categories.filter(x => x.id !== id); save();
+    removePurchases(ids); pushCategories(S.categories, [id]); render(); toast('Supprimé');
+  });
+}
+
 function renderBuy(){
   const list = [...S.purchases].sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
   const total = S.purchases.filter(inMonth).reduce((s,p)=>s+p.price,0);
@@ -359,6 +411,7 @@ function renderBuy(){
     if (selMode){ selected.has(id)?selected.delete(id):selected.add(id); buzz(); renderBuy(); updSel(); }
     else openBuy(id);
   });
+  if (!selMode) document.querySelectorAll('.item').forEach(el => longPress(el, () => askDelPurchase(el.dataset.id)));
 }
 
 const spentBy = id => S.purchases.filter(p => p.cat===id && inMonth(p)).reduce((s,p)=>s+p.price,0);
@@ -367,11 +420,12 @@ function renderBudget(){
   const cards = S.categories.map((c, i) => {
     const b = c.budget, s = spentBy(c.id), r = b - s; tb += b; ts += s;
     const pct = b > 0 ? Math.min(100, s / b * 100) : (s > 0 ? 100 : 0);
-    return `<div class="bc" style="--c:${c.color};animation-delay:${i*45}ms"><span class="chip">${c.icon}</span><div class="bm"><div class="bt"><b>${esc(c.name)}</b><span class="${r<=0?'neg':''}">${fmt(r)}</span></div><div class="bar"><i class="${s>b?'over':''}" style="width:${pct}%"></i></div><small>${fmt(s)} / ${fmt(b)}</small></div></div>`;
+    return `<div class="bc" data-id="${c.id}" style="--c:${c.color};animation-delay:${i*45}ms"><span class="chip">${c.icon}</span><div class="bm"><div class="bt"><b>${esc(c.name)}<em>${fmt(s)} / ${fmt(b)}</em></b><span class="${r<=0?'neg':''}">${fmt(r)}</span></div><div class="bar"><i class="${s>b?'over':''}" style="width:${pct}%"></i></div></div></div>`;
   }).join('');
   const rem = tb - ts, pct = tb > 0 ? Math.min(100, ts / tb * 100) : 0, off = 276.46 * (1 - pct / 100);
   const ring = `<section class="ringbox"><div class="ring"><svg viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d8dff"/><stop offset="1" stop-color="#b06bff"/></linearGradient></defs><circle class="t" cx="50" cy="50" r="44"/><circle class="p" cx="50" cy="50" r="44" style="stroke-dashoffset:${off}"/></svg><span>${Math.round(pct)}%</span></div><div class="rb"><small>reste</small><div class="big ${rem<0?'neg':''}">${fmt(rem)}</div><div class="sub">sur ${fmt(tb)}</div></div></section>`;
   $('#main').innerHTML = ring + cards;
+  document.querySelectorAll('.bc').forEach(el => longPress(el, () => askDelCategory(el.dataset.id)));
 }
 
 function render(anim){
@@ -382,6 +436,7 @@ function render(anim){
   $('#selBtn').style.display = isA ? '' : 'none';
   $('#penBtn').style.display = isA ? 'none' : '';
   $('#main').classList.toggle('anim', anim === true);
+  $('#main').classList.toggle('fit', !isA);
   isA ? renderBuy() : renderBudget();
   updSel();
 }
@@ -401,11 +456,11 @@ function openBuy(id){
   $('#note').value = p ? (p.note||'') : '';
   $('#buyDel').style.display = id ? '' : 'none';
   $('#cur1').textContent = S.currency;
-  drawCatBtns(); show('#ovBuy');
+  drawCatBtns(); show('#ovBuy'); fitBuy();
 }
 function drawCatBtns(){
   $('#catBtns').innerHTML = S.categories.map(c => `<button class="cb ${pickedCat===c.id?'on':''}" data-id="${c.id}" style="--c:${c.color}"><span class="chip">${c.icon}</span><span class="n">${esc(c.name)}</span></button>`).join('');
-  document.querySelectorAll('.cb').forEach(b => b.onclick = () => { pickedCat = b.dataset.id; buzz(); drawCatBtns(); });
+  document.querySelectorAll('.cb').forEach(b => b.onclick = () => { pickedCat = b.dataset.id; buzz(); drawCatBtns(); if (!editId && !$('#price').value) $('#price').focus(); });
 }
 $('#buySave').onclick = () => {
   const price = parseFloat($('#price').value);
@@ -418,6 +473,15 @@ $('#buySave').onclick = () => {
   else { p = {id:uid(), cat:pickedCat, price, date, note}; S.purchases.push(p); }
   save(); pushPurchase(p); hide('#ovBuy'); render(); buzz(); toast('Enregistré ✓');
 };
+// keep the sheet (and the Save button) above the on-screen keyboard
+function fitBuy(){
+  const o = $('#ovBuy'), v = window.visualViewport;
+  if (!v || !o.classList.contains('show')) { o.style.top = o.style.bottom = o.style.height = ''; return; }
+  o.style.bottom = 'auto'; o.style.top = v.offsetTop + 'px'; o.style.height = v.height + 'px';
+}
+if (window.visualViewport) ['resize', 'scroll'].forEach(ev => visualViewport.addEventListener(ev, fitBuy));
+['#price', '#note'].forEach(s => $(s).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#buySave').click(); } }));
+$('#price').addEventListener('focus', () => setTimeout(() => { const on = document.querySelector('.cb.on'); if (on) on.scrollIntoView({ block: 'nearest' }); }, 300));
 $('#buyDel').onclick = () => { if (confirm('Supprimer cet achat ?')){ const id = editId; S.purchases = S.purchases.filter(p=>p.id!==id); save(); removePurchases([id]); hide('#ovBuy'); render(); } };
 
 // ---- categories editor (Budget tab only)
