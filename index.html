@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1c1e">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<title>Finance</title>
+<style>
+:root{--bg:#1c1c1e;--panel:#232326;--line:#38383c;--text:#e8e8ea;--muted:#9a9aa0;--blue:#2f80ed;--lblue:#8ec5ff;--green:#22d55b;--red:#ff3b30;--orange:#f5a142}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Roboto,system-ui,-apple-system,Segoe UI,sans-serif}
+#app{display:flex;flex-direction:column;height:100%;max-width:720px;margin:0 auto;position:relative}
+header{display:flex;align-items:center;gap:12px;padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top))}
+header h1{flex:1;font-size:19px;font-weight:500;margin:0;display:flex;align-items:center;gap:10px}
+#dot{width:9px;height:9px;border-radius:50%;background:#666;display:inline-block}
+.ib{background:none;border:0;color:var(--text);padding:6px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.ib:active{background:#ffffff1a}
+.ib svg{width:24px;height:24px;fill:currentColor}
+.bar{display:flex;align-items:center;gap:8px;padding:0 14px 8px}
+.bar input,.bar select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:15px}
+.bar input[type=search]{flex:1;min-width:0}
+main{flex:1;overflow:auto;border:2px solid var(--blue);border-radius:4px;margin:0 4px}
+table{width:100%;border-collapse:collapse}
+th{position:sticky;top:0;background:var(--bg);text-align:left;padding:14px 12px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+th.sort{cursor:pointer}
+td{padding:14px 12px;border-bottom:1px solid var(--line);font-size:16px;white-space:nowrap}
+tr.row{cursor:pointer}tr.row:active{background:#ffffff0d}
+.cat{display:flex;align-items:center;gap:10px}
+.cat small{display:block;color:var(--muted);font-size:11px}
+.chev{text-align:right;width:20px}
+.bud td{font-weight:600}
+.total td{color:var(--green);font-weight:700;text-decoration:underline}
+.neg{color:var(--red);font-weight:700}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+nav{display:flex;background:#161618;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--muted);padding:10px 0 8px;font-size:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav button svg{width:26px;height:26px;fill:currentColor}
+nav button.on{color:var(--lblue)}
+nav button.on::after{content:"";position:absolute;bottom:0;width:48px;height:4px;border-radius:4px 4px 0 0;background:var(--lblue)}
+.fab{position:absolute;right:16px;bottom:84px;width:56px;height:56px;border-radius:16px;border:0;background:var(--lblue);color:#111;font-size:34px;line-height:1;cursor:pointer;box-shadow:0 4px 12px #0008}
+.pen{position:absolute;right:10px;top:60px;width:38px;height:38px;border-radius:50%;border:0;background:var(--blue);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 8px #0008;z-index:3}
+.pen svg{width:20px;height:20px;fill:#fff}
+.sel{position:absolute;left:0;right:0;bottom:62px;background:var(--panel);border-top:1px solid var(--line);padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+.btn{background:none;border:1px solid var(--lblue);color:var(--lblue);border-radius:6px;padding:8px 16px;font-size:15px;cursor:pointer}
+.btn.pri{background:var(--lblue);color:#111}
+.btn.del{border-color:var(--red);color:var(--red)}
+.overlay{position:fixed;inset:0;background:var(--bg);z-index:10;overflow:auto;display:none}
+.overlay.show{display:block}
+.ov-in{max-width:720px;margin:0 auto;padding:0 0 40px}
+.ov-h{display:flex;align-items:center;gap:12px;padding:14px;padding-top:max(14px,env(safe-area-inset-top));position:sticky;top:0;background:var(--bg);z-index:2}
+.ov-h h2{flex:1;margin:0;font-size:19px;font-weight:500}
+.form{padding:10px 24px}
+.form label{display:block;font-size:13px;color:var(--muted);margin:18px 0 6px}
+.form label b{color:var(--lblue)}
+.cb{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:16px;margin-bottom:5px;cursor:pointer;border-radius:3px}
+.cb.on{border-color:var(--lblue);background:#2a3a4d;box-shadow:inset 0 0 0 1px var(--lblue)}
+.fi{width:100%;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:14px;font-size:16px}
+.price{display:flex;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding-left:12px}
+.price span{font-size:18px}.price input{border:0;background:none}
+.price input:focus,.fi:focus{outline:2px solid var(--lblue)}
+.ed{display:grid;grid-template-columns:44px 1fr 90px 40px 36px;gap:6px;align-items:center;margin-bottom:8px}
+.ed input{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:10px 6px;font-size:15px;width:100%;min-width:0}
+.ed input[type=color]{padding:2px;height:40px}
+.hint{color:var(--muted);font-size:14px;line-height:1.4}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 18px;border-radius:8px;z-index:20;opacity:0;transition:.25s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg></button>
+    <h1><svg viewBox="0 0 24 24" width="34" height="34" fill="#4fc3f7"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM1 2v2h2l3.6 7.6-1.4 2.4A2 2 0 0 0 7 17h12v-2H7.4l1.1-2h7.5a2 2 0 0 0 1.7-1l3.6-6.5A1 1 0 0 0 20.4 4H5.2l-.9-2H1zm16 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span id="title">Achat</span><span id="dot" title="Synchronisation"></span></h1>
+    <button class="ib" id="searchBtn" aria-label="Recherche"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg></button>
+    <button class="ib" id="selBtn" aria-label="Sélection"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"/></svg></button>
+    <button class="ib" id="refBtn" aria-label="Actualiser"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+  </header>
+  <div class="bar" id="bar">
+    <input type="search" id="q" placeholder="Rechercher…" style="display:none">
+    <select id="month"></select>
+  </div>
+  <button class="pen" id="penBtn" aria-label="Modifier les catégories"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+  <main id="main"></main>
+  <button class="fab" id="fab" aria-label="Ajouter">+</button>
+  <div class="sel" id="selBar" style="display:none"><span id="selCount">0 sélectionné(s)</span><button class="btn del" id="selDel">Supprimer</button></div>
+  <nav>
+    <button id="tabA" class="on"><svg viewBox="0 0 24 24"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM1 2v2h2l3.6 7.6-1.4 2.4A2 2 0 0 0 7 17h12v-2H7.4l1.1-2h7.5a2 2 0 0 0 1.7-1l3.6-6.5A1 1 0 0 0 20.4 4H5.2l-.9-2H1zm16 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>Achat</button>
+    <button id="tabB"><svg viewBox="0 0 24 24"><path d="M9.5 2h5l1.5 3h-8l1.5-3zM12 7c-4 0-8 4-8 9 0 3.3 2.7 6 6 6h4c3.3 0 6-2.7 6-6 0-5-4-9-8-9zm.8 11.5V20h-1.5v-1.5c-1.1-.2-1.9-.9-2-1.9h1.5c.1.4.5.7 1.2.7.8 0 1.2-.4 1.2-.8 0-.5-.3-.8-1.5-1.1-1.4-.3-2.3-.8-2.3-2 0-.9.7-1.6 1.9-1.8V10h1.5v1.1c1 .2 1.7.8 1.8 1.8h-1.5c-.1-.4-.4-.6-1-.6-.7 0-1 .3-1 .7 0 .4.4.6 1.5.9 1.4.4 2.3.9 2.3 2.1 0 1-.8 1.7-1.9 1.9z"/></svg>Budget</button>
+  </nav>
+</div>
+
+<!-- Add / edit purchase -->
+<div class="overlay" id="ovBuy"><div class="ov-in">
+  <div class="ov-h"><button class="ib" data-close><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button><h2 id="buyTitle">Acheter</h2><button class="btn" data-close>Cancel</button><button class="btn pri" id="buySave">Save</button></div>
+  <div class="form">
+    <label>Catégories <b>*</b></label><div id="catBtns"></div>
+    <label>Prix <b>*</b></label><div class="price"><span id="cur1">$</span><input class="fi" id="price" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.0"></div>
+    <label>Date</label><input class="fi" id="date" type="date">
+    <label>Note (facultatif)</label><input class="fi" id="note" type="text" placeholder="Ex : épicerie, pharmacie…">
+    <div style="margin-top:24px"><button class="btn del" id="buyDel" style="display:none">Supprimer cet achat</button></div>
+  </div>
+</div></div>
+
+<!-- Edit categories (Budget tab) -->
+<div class="overlay" id="ovCats"><div class="ov-in">
+  <div class="ov-h"><button class="ib" data-close><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button><h2>Catégories & budgets</h2><button class="btn pri" id="catsSave">Save</button></div>
+  <div class="form"><p class="hint" style="margin-top:0">Icône · Nom · Budget mensuel · Couleur</p><div id="catRows"></div><button class="btn" id="addCat">+ Ajouter une catégorie</button></div>
+</div></div>
+
+<!-- Menu: sync account -->
+<div class="overlay" id="ovMenu"><div class="ov-in">
+  <div class="ov-h"><button class="ib" data-close><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button><h2>Menu</h2></div>
+  <div class="form">
+    <p class="hint" id="syncTxt" style="margin-top:0"></p>
+    <div id="authBox">
+      <label>Email</label><input class="fi" id="aEmail" type="email" autocomplete="username">
+      <label>Mot de passe (6 caractères min.)</label><input class="fi" id="aPass" type="password" autocomplete="current-password">
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn pri" id="aIn">Se connecter</button><button class="btn" id="aUp">Créer le compte</button></div>
+    </div>
+    <div id="outBox" style="margin-top:18px"><button class="btn del" id="aOut">Se déconnecter</button></div>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'finance-app-v1';
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const DEFAULT = {
+  currency: '$',
+  categories: [
+    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:350},
+    {id:'viandes', name:'Viandes', icon:'🥩', color:'#ff453a', budget:250},
+    {id:'legumes', name:'Légumes', icon:'🌶️', color:'#22d55b', budget:140},
+    {id:'yoyo', name:'Yoyo Hygiène', icon:'🍼', color:'#f5d142', budget:200},
+    {id:'anouar', name:'Anouar', icon:'⭐', color:'#2f80ed', budget:100},
+    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:60},
+    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:200}
+  ],
+  purchases: []
+};
+let S; try { S = JSON.parse(localStorage.getItem(KEY)) || structuredClone(DEFAULT); } catch { S = structuredClone(DEFAULT); }
+const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+
+let tab = 'A', month = new Date().toISOString().slice(0,7), query = '', selMode = false, selected = new Set(), editId = null, pickedCat = null, sortAsc = null;
+
+// ================= Firebase sync (optional) =================
+let fb = null, user = null, unsubs = [], pending = false;
+const cfg = window.FIREBASE_CONFIG;
+if (window.firebase && cfg && cfg.apiKey) {
+  try {
+    firebase.initializeApp(cfg);
+    fb = { auth: firebase.auth(), db: firebase.firestore() };
+    fb.db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  } catch (e) { fb = null; }
+}
+const col = n => fb.db.collection('users').doc(user.uid).collection(n);
+const syncing = () => !!(fb && user);
+const noop = () => {};
+const pPayload = p => ({ cat: p.cat, price: p.price, date: p.date, note: p.note || '' });
+const cPayload = (c, i) => ({ name: c.name, icon: c.icon, color: c.color, budget: c.budget, order: i });
+
+function pushPurchase(p){ if (syncing()) col('purchases').doc(p.id).set(pPayload(p)).catch(noop); }
+function removePurchases(ids){ if (!syncing() || !ids.length) return; const b = fb.db.batch(); ids.forEach(i => b.delete(col('purchases').doc(i))); b.commit().catch(noop); }
+function pushCategories(cats, removedIds){
+  if (!syncing()) return;
+  const b = fb.db.batch();
+  cats.forEach((c, i) => b.set(col('categories').doc(c.id), cPayload(c, i)));
+  removedIds.forEach(id => b.delete(col('categories').doc(id)));
+  b.commit().catch(noop);
+}
+
+function startSync(){
+  stopSync();
+  const kc = 'fin-seed-c-' + user.uid, kp = 'fin-seed-p-' + user.uid;
+  unsubs.push(col('categories').onSnapshot({ includeMetadataChanges: true }, snap => {
+    if (!snap.metadata.fromCache && snap.empty && !localStorage.getItem(kc)) {
+      localStorage.setItem(kc, '1');
+      if (S.categories.length) { pushCategories(S.categories, []); return; }
+    }
+    if (!snap.metadata.fromCache) localStorage.setItem(kc, '1');
+    S.categories = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order || 0) - (b.order || 0));
+    pending = snap.metadata.hasPendingWrites; save(); render(); updSyncUI();
+  }, noop));
+  unsubs.push(col('purchases').onSnapshot({ includeMetadataChanges: true }, snap => {
+    if (!snap.metadata.fromCache && snap.empty && !localStorage.getItem(kp)) {
+      localStorage.setItem(kp, '1');
+      if (S.purchases.length) { const b = fb.db.batch(); S.purchases.forEach(p => b.set(col('purchases').doc(p.id), pPayload(p))); b.commit().catch(noop); return; }
+    }
+    if (!snap.metadata.fromCache) localStorage.setItem(kp, '1');
+    S.purchases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    pending = snap.metadata.hasPendingWrites; save(); render(); updSyncUI();
+  }, noop));
+}
+function stopSync(){ unsubs.forEach(u => u()); unsubs = []; }
+
+function updSyncUI(){
+  let txt, color;
+  if (!fb) { txt = 'Synchronisation non configurée : les données restent sur cet appareil.'; color = '#666'; }
+  else if (!user) { txt = 'Non connecté. Connectez-vous pour synchroniser vos données entre appareils.'; color = '#666'; }
+  else if (!navigator.onLine) { txt = 'Connecté : ' + user.email + '\nHors ligne : vos changements seront envoyés au retour de la connexion.'; color = 'var(--orange)'; }
+  else if (pending) { txt = 'Connecté : ' + user.email + '\nSynchronisation en cours…'; color = 'var(--orange)'; }
+  else { txt = 'Connecté : ' + user.email + '\nSynchronisé ✓'; color = 'var(--green)'; }
+  $('#syncTxt').innerText = txt; $('#dot').style.background = color;
+  $('#authBox').style.display = fb && !user ? '' : 'none';
+  $('#outBox').style.display = fb && user ? '' : 'none';
+}
+window.addEventListener('online', updSyncUI); window.addEventListener('offline', updSyncUI);
+
+const AUTH_ERR = {
+  'auth/invalid-credential':'Email ou mot de passe incorrect', 'auth/wrong-password':'Email ou mot de passe incorrect', 'auth/user-not-found':'Email ou mot de passe incorrect',
+  'auth/email-already-in-use':'Ce compte existe déjà : utilisez « Se connecter »', 'auth/weak-password':'Mot de passe trop court (6 caractères min.)',
+  'auth/invalid-email':'Email invalide', 'auth/network-request-failed':'Pas de connexion internet', 'auth/too-many-requests':'Trop d\'essais, réessayez plus tard',
+  'auth/operation-not-allowed':'Activez Email/Mot de passe dans Firebase'
+};
+async function doAuth(create){
+  const email = $('#aEmail').value.trim(), pass = $('#aPass').value;
+  if (!email || !pass) return toast('Entrez email et mot de passe');
+  try { create ? await fb.auth.createUserWithEmailAndPassword(email, pass) : await fb.auth.signInWithEmailAndPassword(email, pass); $('#aPass').value=''; hide('#ovMenu'); toast('Connecté'); }
+  catch (e) { toast(AUTH_ERR[e.code] || e.code || 'Erreur'); }
+}
+$('#aIn').onclick = () => doAuth(false);
+$('#aUp').onclick = () => doAuth(true);
+$('#aOut').onclick = async () => {
+  if (!confirm('Se déconnecter ? Les données locales de cet appareil seront effacées (elles restent dans votre compte).')) return;
+  stopSync(); await fb.auth.signOut(); S = structuredClone(DEFAULT); save(); hide('#ovMenu'); render();
+};
+if (fb) fb.auth.onAuthStateChanged(u => { user = u; if (u) startSync(); else stopSync(); updSyncUI(); });
+
+// ================= UI =================
+const catOf = id => S.categories.find(c => c.id === id) || {name:'(supprimée)', icon:'❔', color:'#888', budget:0};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => { const r = Math.round(n*100)/100; return S.currency + (Number.isInteger(r) ? r.toFixed(1) : String(r)); };
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+
+function renderMonths(){
+  const set = new Set([new Date().toISOString().slice(0,7), month]);
+  S.purchases.forEach(p => set.add(p.date.slice(0,7)));
+  const names = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  $('#month').innerHTML = [...set].filter(m=>m!=='all').sort().reverse().map(m => `<option value="${m}">${names[+m.slice(5)-1]} ${m.slice(0,4)}</option>`).join('') + '<option value="all">Tout</option>';
+  $('#month').value = month;
+}
+const inMonth = p => month==='all' || p.date.startsWith(month);
+
+function renderBuy(){
+  let list = [...S.purchases].sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  if (query){ const q=query.toLowerCase(); list = list.filter(p => catOf(p.cat).name.toLowerCase().includes(q) || (p.note||'').toLowerCase().includes(q) || String(p.price).includes(q)); }
+  if (!list.length){ $('#main').innerHTML = '<div class="empty">Aucun achat.<br>Appuyez sur + pour en ajouter un.</div>'; return; }
+  $('#main').innerHTML = `<table><thead><tr><th>Catégories</th><th>Prix</th><th></th></tr></thead><tbody>` + list.map(p => {
+    const c = catOf(p.cat);
+    return `<tr class="row" data-id="${p.id}"><td><div class="cat">${selMode?`<input type="checkbox" ${selected.has(p.id)?'checked':''} tabindex="-1">`:''}<span style="font-size:20px">${c.icon}</span><span>${esc(c.name)}<small>${p.date}${p.note?' · '+esc(p.note):''}</small></span></div></td><td>${fmt(p.price)}</td><td class="chev">›</td></tr>`;
+  }).join('') + '</tbody></table>';
+  document.querySelectorAll('tr.row').forEach(tr => tr.onclick = () => {
+    const id = tr.dataset.id;
+    if (selMode){ selected.has(id)?selected.delete(id):selected.add(id); renderBuy(); updSel(); }
+    else openBuy(id);
+  });
+}
+
+const spentBy = id => S.purchases.filter(p => p.cat===id && inMonth(p)).reduce((s,p)=>s+p.price,0);
+function renderBudget(){
+  let cats = [...S.categories];
+  if (sortAsc!==null) cats.sort((a,b)=> sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+  const mult = month==='all' ? (new Set(S.purchases.map(p=>p.date.slice(0,7))).size || 1) : 1;
+  let tb=0, tr=0;
+  const rows = cats.map(c => {
+    const b = c.budget*mult, r = b - spentBy(c.id); tb+=b; tr+=r;
+    return `<tr class="bud"><td><div class="cat"><span style="font-size:20px">${c.icon}</span><span>${esc(c.name)}</span></div></td><td style="font-weight:500">${fmt(b)}</td><td class="${r<=0?'neg':''}">${r<=0?'⤓ ':''}${fmt(r)}</td></tr>`;
+  }).join('');
+  $('#main').innerHTML = `<table><thead><tr><th class="sort" id="thc">Catégories ${sortAsc===null?'':sortAsc?'↑':'↓'}</th><th>Budget</th><th>Reste</th></tr></thead><tbody>${rows}<tr class="total"><td><div class="cat">🏛️ TOTAL</div></td><td>${fmt(tb)}</td><td class="${tr<0?'neg':''}">${fmt(tr)}</td></tr></tbody></table>`;
+  $('#thc').onclick = () => { sortAsc = sortAsc===null ? true : sortAsc ? false : null; renderBudget(); };
+}
+
+function render(){
+  const isA = tab==='A';
+  $('#title').textContent = isA ? 'Achat' : 'Budget';
+  $('#tabA').classList.toggle('on', isA); $('#tabB').classList.toggle('on', !isA);
+  $('#fab').style.display = isA && !selMode ? '' : 'none';
+  $('#selBtn').style.display = isA ? '' : 'none';
+  $('#penBtn').style.display = isA ? 'none' : '';
+  $('#month').style.display = isA ? 'none' : '';
+  $('#bar').style.display = (!isA || $('#q').style.display!=='none') ? 'flex' : 'none';
+  if (!isA) renderMonths();
+  isA ? renderBuy() : renderBudget();
+  updSel();
+}
+function updSel(){ $('#selBar').style.display = selMode && tab==='A' ? 'flex' : 'none'; $('#selCount').textContent = selected.size + ' sélectionné(s)'; }
+
+const show = id => $(id).classList.add('show'), hide = id => $(id).classList.remove('show');
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('.overlay').classList.remove('show'));
+
+// ---- purchase form
+function openBuy(id){
+  editId = id || null;
+  const p = id ? S.purchases.find(x=>x.id===id) : null;
+  pickedCat = p ? p.cat : null;
+  $('#buyTitle').textContent = id ? 'Modifier' : 'Acheter';
+  $('#price').value = p ? p.price : '';
+  $('#date').value = p ? p.date : new Date().toISOString().slice(0,10);
+  $('#note').value = p ? (p.note||'') : '';
+  $('#buyDel').style.display = id ? '' : 'none';
+  $('#cur1').textContent = S.currency;
+  drawCatBtns(); show('#ovBuy');
+}
+function drawCatBtns(){
+  $('#catBtns').innerHTML = S.categories.map(c => `<button class="cb ${pickedCat===c.id?'on':''}" data-id="${c.id}"><span>${c.icon}</span>${esc(c.name)}</button>`).join('');
+  document.querySelectorAll('.cb').forEach(b => b.onclick = () => { pickedCat = b.dataset.id; drawCatBtns(); });
+}
+$('#buySave').onclick = () => {
+  const price = parseFloat($('#price').value);
+  if (!pickedCat) return toast('Choisissez une catégorie');
+  if (isNaN(price) || price < 0) return toast('Entrez un prix valide');
+  const date = $('#date').value || new Date().toISOString().slice(0,10);
+  const note = $('#note').value.trim();
+  let p;
+  if (editId){ p = S.purchases.find(x=>x.id===editId); Object.assign(p, {cat:pickedCat, price, date, note}); }
+  else { p = {id:uid(), cat:pickedCat, price, date, note}; S.purchases.push(p); }
+  save(); pushPurchase(p); hide('#ovBuy'); render(); toast('Enregistré');
+};
+$('#buyDel').onclick = () => { if (confirm('Supprimer cet achat ?')){ const id = editId; S.purchases = S.purchases.filter(p=>p.id!==id); save(); removePurchases([id]); hide('#ovBuy'); render(); } };
+
+// ---- categories editor (Budget tab only)
+let draft = [];
+function openCats(){ draft = structuredClone(S.categories); drawCatRows(); show('#ovCats'); }
+function drawCatRows(){
+  $('#catRows').innerHTML = draft.map((c,i) => `<div class="ed" data-i="${i}"><input data-f="icon" value="${esc(c.icon)}" maxlength="4" style="text-align:center;font-size:20px"><input data-f="name" value="${esc(c.name)}"><input data-f="budget" type="number" inputmode="decimal" value="${c.budget}"><input data-f="color" type="color" value="${c.color}"><button class="ib" data-rm="${i}" style="color:var(--red)">✕</button></div>`).join('');
+  document.querySelectorAll('.ed input').forEach(inp => inp.oninput = () => { const d = draft[inp.closest('.ed').dataset.i]; d[inp.dataset.f] = inp.dataset.f==='budget' ? (parseFloat(inp.value)||0) : inp.value; });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { draft.splice(+b.dataset.rm,1); drawCatRows(); });
+}
+$('#addCat').onclick = () => { draft.push({id:uid(), name:'Nouvelle', icon:'🛒', color:'#8ec5ff', budget:0}); drawCatRows(); };
+$('#catsSave').onclick = () => {
+  if (draft.some(c=>!c.name.trim())) return toast('Chaque catégorie doit avoir un nom');
+  const removed = S.categories.filter(c => !draft.find(d=>d.id===c.id)).map(c=>c.id);
+  const orphan = S.purchases.filter(p => removed.includes(p.cat)).map(p => p.id);
+  if (orphan.length && !confirm('Des achats utilisent une catégorie supprimée. Les supprimer aussi ?')) return;
+  S.purchases = S.purchases.filter(p => !orphan.includes(p.id));
+  S.categories = draft; save();
+  removePurchases(orphan); pushCategories(draft, removed);
+  hide('#ovCats'); render(); toast('Enregistré');
+};
+
+// ---- header / nav
+$('#tabA').onclick = () => { tab='A'; render(); };
+$('#tabB').onclick = () => { tab='B'; selMode=false; selected.clear(); render(); };
+$('#fab').onclick = () => openBuy();
+$('#penBtn').onclick = openCats;
+$('#month').onchange = e => { month = e.target.value; renderBudget(); };
+$('#refBtn').onclick = () => { render(); updSyncUI(); toast('Actualisé'); };
+$('#searchBtn').onclick = () => {
+  const q = $('#q'); let open = q.style.display !== 'none';
+  if (tab==='B'){ tab='A'; open=false; }
+  open = !open; q.style.display = open ? '' : 'none';
+  if (open) q.focus(); else { q.value=''; query=''; }
+  render();
+};
+$('#q').oninput = e => { query = e.target.value; renderBuy(); };
+$('#selBtn').onclick = () => { selMode=!selMode; selected.clear(); render(); };
+$('#selDel').onclick = () => { if(!selected.size) return; if(confirm(`Supprimer ${selected.size} achat(s) ?`)){ const ids=[...selected]; S.purchases = S.purchases.filter(p=>!selected.has(p.id)); selected.clear(); selMode=false; save(); removePurchases(ids); render(); } };
+$('#menuBtn').onclick = () => { updSyncUI(); show('#ovMenu'); };
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+render(); updSyncUI();
+</script>
+</body>
+</html>
