@@ -1,4 +1,4 @@
-const CACHE = 'finance-v7';
+const CACHE = 'finance-v8';
 const LOCAL = ['./', './index.html', './manifest.json', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './firebase-config.js'];
 const CDN = [
   'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
