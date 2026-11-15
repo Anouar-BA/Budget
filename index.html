@@ -111,15 +111,22 @@ main::-webkit-scrollbar{display:none}
 .sheet::before{content:"";display:block;width:42px;height:5px;border-radius:3px;background:#ffffff30;margin:0 auto 14px}
 .sh-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .sh-h h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.4px}
-.amount{display:flex;align-items:center;justify-content:center;gap:6px;margin:14px 0 20px}
-.amount span{font-size:34px;font-weight:700;color:var(--muted)}
-.amount input{width:62%;background:none;border:0;outline:0;color:var(--text);font-size:52px;font-weight:800;letter-spacing:-2px;text-align:left;padding:0}
+.amount{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0 10px}
+.amount span{font-size:30px;font-weight:700;color:var(--muted)}
+.amount input{width:62%;background:none;border:0;outline:0;color:var(--text);font-size:44px;font-weight:800;letter-spacing:-2px;text-align:left;padding:0}
 .amount input::placeholder{color:#ffffff26}
 .amount input{-moz-appearance:textfield;appearance:textfield}
 .amount input::-webkit-outer-spin-button,.amount input::-webkit-inner-spin-button,.ed input::-webkit-outer-spin-button,.ed input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
-.cb{display:flex;align-items:center;gap:10px;padding:12px;border-radius:18px;border:1.5px solid var(--line);background:var(--s1);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:.15s;text-align:left}
-.cb .chip{width:36px;height:36px;font-size:18px;border-radius:12px}
+.cats{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+#ovBuy .sheet{height:min(100vh,760px);height:min(100dvh,760px);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding-top:8px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+#ovBuy .sheet::before{margin-bottom:8px}
+#ovBuy .sh-h{margin-bottom:0}
+#ovBuy .fi{margin-bottom:0}
+#ovBuy .cta{margin-top:10px;flex:none}
+.hd{display:flex;gap:8px}
+.hd .ib.dl{color:var(--red);border-color:#fb718544}
+.cb{flex:none;width:100%;display:flex;align-items:center;gap:12px;padding:7px 12px;border-radius:16px;border:1.5px solid var(--line);background:var(--s1);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:.15s;text-align:left}
+.cb .chip{width:32px;height:32px;font-size:17px;border-radius:11px}
 .cb.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--s1));box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent)}
 .cb:active{transform:scale(.96)}
 .cb span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -167,12 +174,11 @@ input[type=date]{color-scheme:dark}
 
 <!-- Add / edit purchase -->
 <div class="overlay" id="ovBuy"><div class="sheet">
-  <div class="sh-h"><h2 id="buyTitle">Nouvel achat</h2><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div>
+  <div class="sh-h"><h2 id="buyTitle">Nouvel achat</h2><div class="hd"><button class="ib dl" id="buyDel" style="display:none" aria-label="Supprimer"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div></div>
   <div class="amount"><span id="cur1">$</span><input id="price" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
-  <div class="grid" id="catBtns"></div>
+  <div class="cats" id="catBtns"></div>
   <input class="fi" id="note" type="text" placeholder="Note (facultatif)">
   <button class="cta" id="buySave">Enregistrer</button>
-  <button class="btn del wide" id="buyDel" style="display:none">Supprimer</button>
 </div></div>
 
 <!-- Edit categories (Budget tab) -->
@@ -186,7 +192,11 @@ input[type=date]{color-scheme:dark}
 <!-- Menu: sync account -->
 <div class="overlay" id="ovMenu"><div class="sheet">
   <div class="sh-h"><h2>Compte</h2><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div>
-  <p class="hint" id="syncTxt"></p>
+  <div id="installBox">
+    <button class="cta" id="installBtn" style="margin-top:0">📲 Installer l'application</button>
+    <p class="hint" id="installHint" style="display:none"></p>
+  </div>
+  <p class="hint" id="syncTxt" style="margin-top:18px"></p>
   <div id="authBox">
     <input class="fi" id="aEmail" type="email" placeholder="Email" autocomplete="username">
     <input class="fi" id="aPass" type="password" placeholder="Mot de passe (6 caractères min.)" autocomplete="current-password">
@@ -391,7 +401,6 @@ function openBuy(id){
   $('#buyDel').style.display = id ? '' : 'none';
   $('#cur1').textContent = S.currency;
   drawCatBtns(); show('#ovBuy');
-  if (!id) setTimeout(() => $('#price').focus(), 350);
 }
 function drawCatBtns(){
   $('#catBtns').innerHTML = S.categories.map(c => `<button class="cb ${pickedCat===c.id?'on':''}" data-id="${c.id}" style="--c:${c.color}"><span class="chip">${c.icon}</span><span class="n">${esc(c.name)}</span></button>`).join('');
@@ -438,7 +447,22 @@ $('#penBtn').onclick = openCats;
 $('#refBtn').onclick = () => { render(true); updSyncUI(); toast('Actualisé'); };
 $('#selBtn').onclick = () => { selMode=!selMode; selected.clear(); render(); };
 $('#selDel').onclick = () => { if(!selected.size) return; if(confirm(`Supprimer ${selected.size} achat(s) ?`)){ const ids=[...selected]; S.purchases = S.purchases.filter(p=>!selected.has(p.id)); selected.clear(); selMode=false; save(); removePurchases(ids); render(); } };
-$('#menuBtn').onclick = () => { updSyncUI(); show('#ovMenu'); };
+// ---- install as app (Android Chrome)
+let deferredPrompt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+function updInstallUI(){ $('#installBox').style.display = isStandalone() ? 'none' : ''; }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('#installHint').style.display = 'none'; });
+window.addEventListener('appinstalled', () => { deferredPrompt = null; updInstallUI(); hide('#ovMenu'); toast('Application installée ✓'); });
+$('#installBtn').onclick = async () => {
+  if (deferredPrompt) { deferredPrompt.prompt(); try { await deferredPrompt.userChoice; } catch {} deferredPrompt = null; return; }
+  const hint = $('#installHint');
+  hint.textContent = isIOS
+    ? "Sur iPhone : bouton Partager (carré avec une flèche) → « Sur l'écran d'accueil »."
+    : "Dans Chrome : menu ⋮ en haut à droite → « Installer l'application » (ou « Ajouter à l'écran d'accueil »). Si l'option n'apparaît pas, ouvrez d'abord le site avec Chrome à son adresse https.";
+  hint.style.display = '';
+};
+$('#menuBtn').onclick = () => { updInstallUI(); updSyncUI(); show('#ovMenu'); };
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
 render(true); updSyncUI();
