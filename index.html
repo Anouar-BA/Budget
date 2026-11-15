@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090b10">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finance">
+<title>Finance</title>
+<style>
+:root{
+  --bg:#090b10;--s1:#12151d;--s2:#1a1e29;--line:#ffffff14;--text:#f2f4f8;--muted:#8b93a7;
+  --a1:#6d8dff;--a2:#b06bff;--grad:linear-gradient(135deg,#6d8dff,#b06bff);
+  --green:#34d399;--red:#fb7185;--amber:#fbbf24;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,"SF Pro Display",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
+  radial-gradient(520px 380px at 90% -5%,#6d8dff33,transparent 70%),
+  radial-gradient(480px 360px at -10% 35%,#b06bff22,transparent 70%),
+  radial-gradient(500px 400px at 100% 100%,#34d39914,transparent 70%)}
+button,input{font-family:inherit}
+#app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;position:relative}
+
+/* header */
+header{display:flex;align-items:center;gap:6px;padding:14px 16px 6px;padding-top:max(14px,env(safe-area-inset-top))}
+header h1{flex:1;margin:0 0 0 6px;font-size:28px;font-weight:800;letter-spacing:-.6px;display:flex;align-items:center;gap:10px}
+#dot{width:9px;height:9px;border-radius:50%;background:#555;box-shadow:0 0 0 4px #ffffff0a;transition:.3s}
+.ib{width:42px;height:42px;background:#ffffff0d;border:1px solid var(--line);color:var(--text);border-radius:14px;cursor:pointer;display:grid;place-items:center;transition:.15s;backdrop-filter:blur(10px)}
+.ib:active{transform:scale(.92);background:#ffffff1c}
+.ib svg{width:21px;height:21px;fill:currentColor}
+
+/* content */
+main{flex:1;overflow:auto;padding:10px 16px 170px;scroll-behavior:smooth}
+main::-webkit-scrollbar{display:none}
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:22px;background:linear-gradient(135deg,#2a3a8f,#5a2d9c 70%);box-shadow:0 18px 40px -18px #6d8dffaa,inset 0 1px 0 #ffffff2a;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;min-height:132px}
+.hero::after{content:"";position:absolute;right:-50px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(#ffffff30,transparent 65%)}
+.hero small{display:block;font-size:13px;color:#ffffffb3;font-weight:500;margin-bottom:4px}
+.hero .big{font-size:40px;font-weight:800;letter-spacing:-1.5px;line-height:1.05}
+.spark{display:flex;align-items:flex-end;gap:5px;height:62px;position:relative;z-index:1}
+.spark i{display:block;width:9px;border-radius:5px;background:#ffffff40;min-height:5px;transform-origin:bottom}
+.spark i:last-child{background:#fff}
+.day{font-size:13px;font-weight:600;color:var(--muted);margin:20px 4px 8px;display:flex;justify-content:space-between}
+.item{display:flex;align-items:center;gap:13px;padding:13px 14px;margin-bottom:8px;border-radius:20px;background:var(--s1);border:1px solid var(--line);cursor:pointer;transition:transform .15s,background .15s}
+.item:active{transform:scale(.98);background:var(--s2)}
+.chip{width:46px;height:46px;flex:none;border-radius:15px;display:grid;place-items:center;font-size:22px;background:color-mix(in srgb,var(--c) 18%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 35%,transparent)}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.ck{width:24px;height:24px;border-radius:50%;border:2px solid #ffffff40;flex:none;display:grid;place-items:center;transition:.15s}
+.ck.on{background:var(--grad);border-color:transparent}
+.ck.on::after{content:"✓";font-size:14px;font-weight:800;color:#fff}
+.empty{text-align:center;color:var(--muted);padding:60px 20px;line-height:1.6}
+.empty .e{font-size:52px;margin-bottom:6px}
+
+/* budget */
+.ringbox{display:flex;align-items:center;gap:20px;border-radius:26px;padding:22px;background:var(--s1);border:1px solid var(--line);margin-bottom:18px;position:relative;overflow:hidden}
+.ringbox::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(#6d8dff22,transparent 65%)}
+.ring{position:relative;width:112px;height:112px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .t{fill:none;stroke:#ffffff12;stroke-width:11}
+.ring .p{fill:none;stroke:url(#g);stroke-width:11;stroke-linecap:round;stroke-dasharray:276.46}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:21px;font-weight:800;letter-spacing:-.5px}
+.rb small{display:block;color:var(--muted);font-size:13px;margin-bottom:3px}
+.rb .big{font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;color:var(--green)}
+.rb .big.neg{color:var(--red)}
+.rb .sub{color:var(--muted);font-size:13px;margin-top:6px}
+.bc{display:flex;gap:13px;padding:14px;margin-bottom:8px;border-radius:20px;background:var(--s1);border:1px solid var(--line)}
+.bm{flex:1;min-width:0}
+.bt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bt b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt span{font-weight:700;font-size:16px;color:var(--green)}
+.bt span.neg{color:var(--red)}
+.bar{height:8px;border-radius:6px;background:#ffffff10;margin:9px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:var(--c);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar i.over{background:var(--red)}
+.bm small{color:var(--muted);font-size:12.5px}
+
+/* anims (only on tab switch) */
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+@keyframes ringIn{from{stroke-dashoffset:276.46}}
+@keyframes grow{from{width:0}}
+@keyframes pop{from{transform:scaleY(0)}}
+.anim .item,.anim .bc,.anim .hero,.anim .ringbox{animation:rise .45s cubic-bezier(.2,.8,.2,1) backwards}
+.anim .ring .p{animation:ringIn 1s cubic-bezier(.2,.8,.2,1)}
+.anim .bar i{animation:grow .8s cubic-bezier(.2,.8,.2,1)}
+.anim .spark i{animation:pop .6s cubic-bezier(.2,.8,.2,1) backwards}
+
+/* dock + fab */
+.dock{position:absolute;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));display:flex;gap:4px;padding:6px;border-radius:26px;background:#161a24d9;border:1px solid #ffffff1a;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 14px 40px -10px #000c;z-index:5}
+.dock button{display:flex;align-items:center;gap:8px;padding:12px 22px;border:0;border-radius:20px;background:none;color:var(--muted);font-size:15px;font-weight:600;cursor:pointer;transition:.25s}
+.dock button svg{width:22px;height:22px;fill:currentColor}
+.dock button.on{background:var(--grad);color:#fff;box-shadow:0 8px 20px -6px #6d8dffbb}
+.fab{position:absolute;right:20px;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 78px);width:60px;height:60px;border-radius:21px;border:0;background:var(--grad);color:#fff;font-size:34px;font-weight:300;line-height:1;cursor:pointer;box-shadow:0 14px 30px -8px #8a6bffcc;z-index:5;transition:.2s}
+.fab:active{transform:scale(.9) rotate(90deg)}
+.sel{position:absolute;left:16px;right:16px;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 78px);z-index:6;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 12px 20px;border-radius:20px;background:#1a1e29f2;border:1px solid #ffffff1a;backdrop-filter:blur(14px)}
+
+/* sheets */
+.overlay{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;justify-content:center;background:#000a;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.overlay.show{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+@keyframes slide{from{transform:translateY(100%)}}
+.sheet{width:100%;max-width:560px;max-height:93vh;overflow:auto;background:linear-gradient(#171b26,#11141c);border-radius:30px 30px 0 0;border:1px solid #ffffff18;border-bottom:0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));animation:slide .35s cubic-bezier(.2,.8,.2,1)}
+.sheet::before{content:"";display:block;width:42px;height:5px;border-radius:3px;background:#ffffff30;margin:0 auto 14px}
+.sh-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sh-h h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.4px}
+.amount{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0 10px}
+.amount span{font-size:30px;font-weight:700;color:var(--muted)}
+.amount input{width:62%;background:none;border:0;outline:0;color:var(--text);font-size:44px;font-weight:800;letter-spacing:-2px;text-align:left;padding:0}
+.amount input::placeholder{color:#ffffff26}
+.amount input{-moz-appearance:textfield;appearance:textfield}
+.amount input::-webkit-outer-spin-button,.amount input::-webkit-inner-spin-button,.ed input::-webkit-outer-spin-button,.ed input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.cats{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+#ovBuy .sheet{height:min(100vh,760px);height:min(100dvh,760px);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding-top:8px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+#ovBuy .sheet::before{margin-bottom:8px}
+#ovBuy .sh-h{margin-bottom:0}
+#ovBuy .fi{margin-bottom:0}
+#ovBuy .cta{margin-top:10px;flex:none}
+.hd{display:flex;gap:8px}
+.hd .ib.dl{color:var(--red);border-color:#fb718544}
+.cb{flex:none;width:100%;display:flex;align-items:center;gap:12px;padding:7px 12px;border-radius:16px;border:1.5px solid var(--line);background:var(--s1);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:.15s;text-align:left}
+.cb .chip{width:32px;height:32px;font-size:17px;border-radius:11px}
+.cb.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--s1));box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent)}
+.cb:active{transform:scale(.96)}
+.cb span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi{width:100%;background:var(--s1);color:var(--text);border:1.5px solid var(--line);border-radius:16px;padding:15px 16px;font-size:16px;margin-bottom:9px;outline:0;transition:.15s}
+.fi:focus{border-color:var(--a1)}
+.fi::placeholder{color:#ffffff40}
+input[type=date]{color-scheme:dark}
+.cta{width:100%;margin-top:10px;padding:17px;border:0;border-radius:18px;background:var(--grad);color:#fff;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 14px 30px -10px #8a6bffcc;transition:.15s}
+.cta:active{transform:scale(.97)}
+.btn{background:none;border:1.5px solid var(--line);color:var(--text);border-radius:14px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer}
+.btn.pri{background:var(--grad);border:0;color:#fff}
+.btn.del{border-color:#fb718555;color:var(--red)}
+.btn.wide{width:100%;margin-top:10px;padding:15px}
+.ed{display:grid;grid-template-columns:50px 1fr 84px 46px 40px;gap:7px;align-items:center;margin-bottom:9px}
+.ed input{background:var(--s1);color:var(--text);border:1.5px solid var(--line);border-radius:14px;padding:12px 6px;font-size:15px;width:100%;min-width:0;outline:0}
+.ed input:focus{border-color:var(--a1)}
+.ed input[type=color]{padding:3px;height:46px;cursor:pointer}
+.ed .ib{width:40px;height:40px;color:var(--red)}
+.hint{color:var(--muted);font-size:14px;line-height:1.5;white-space:pre-line;margin:6px 0 14px}
+.toast{position:fixed;left:50%;bottom:120px;transform:translate(-50%,20px);background:#fff;color:#111;font-weight:600;font-size:14px;padding:12px 20px;border-radius:16px;z-index:40;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center;box-shadow:0 10px 30px #0008}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="ib" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg></button>
+    <h1><span id="title">Achats</span><i id="dot" title="Synchronisation"></i></h1>
+    <button class="ib" id="selBtn" aria-label="Sélection"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"/></svg></button>
+    <button class="ib" id="penBtn" aria-label="Modifier les catégories"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+    <button class="ib" id="refBtn" aria-label="Actualiser"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+  </header>
+  <main id="main"></main>
+  <button class="fab" id="fab" aria-label="Ajouter">+</button>
+  <div class="sel" id="selBar" style="display:none"><span id="selCount">0</span><button class="btn del" id="selDel">Supprimer</button></div>
+  <nav class="dock">
+    <button id="tabA" class="on"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>Achats</button>
+    <button id="tabB"><svg viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/></svg>Budget</button>
+  </nav>
+</div>
+
+<!-- Add / edit purchase -->
+<div class="overlay" id="ovBuy"><div class="sheet">
+  <div class="sh-h"><h2 id="buyTitle">Nouvel achat</h2><div class="hd"><button class="ib dl" id="buyDel" style="display:none" aria-label="Supprimer"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div></div>
+  <div class="amount"><span id="cur1">$</span><input id="price" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0"></div>
+  <div class="cats" id="catBtns"></div>
+  <input class="fi" id="note" type="text" placeholder="Note (facultatif)">
+  <button class="cta" id="buySave">Enregistrer</button>
+</div></div>
+
+<!-- Edit categories (Budget tab) -->
+<div class="overlay" id="ovCats"><div class="sheet">
+  <div class="sh-h"><h2>Catégories</h2><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div>
+  <div id="catRows"></div>
+  <button class="btn wide" id="addCat">+ Ajouter</button>
+  <button class="cta" id="catsSave">Enregistrer</button>
+</div></div>
+
+<!-- Menu: sync account -->
+<div class="overlay" id="ovMenu"><div class="sheet">
+  <div class="sh-h"><h2>Compte</h2><button class="ib" data-close aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg></button></div>
+  <div id="installBox">
+    <button class="cta" id="installBtn" style="margin-top:0">📲 Installer l'application</button>
+    <p class="hint" id="installHint" style="display:none"></p>
+  </div>
+  <p class="hint" id="syncTxt" style="margin-top:18px"></p>
+  <div id="authBox">
+    <input class="fi" id="aEmail" type="email" placeholder="Email" autocomplete="username">
+    <input class="fi" id="aPass" type="password" placeholder="Mot de passe (6 caractères min.)" autocomplete="current-password">
+    <button class="cta" id="aIn">Se connecter</button>
+    <button class="btn wide" id="aUp">Créer le compte</button>
+  </div>
+  <div id="outBox"><button class="btn del wide" id="aOut">Se déconnecter</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'finance-app-v1';
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const DEFAULT = {
+  currency: '$',
+  categories: [
+    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:350},
+    {id:'viandes', name:'Viandes', icon:'🥩', color:'#ff453a', budget:250},
+    {id:'legumes', name:'Légumes', icon:'🌶️', color:'#22d55b', budget:140},
+    {id:'yoyo', name:'Yoyo Hygiène', icon:'🍼', color:'#f5d142', budget:200},
+    {id:'anouar', name:'Anouar', icon:'⭐', color:'#2f80ed', budget:100},
+    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:60},
+    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:200}
+  ],
+  purchases: []
+};
+let S; try { S = JSON.parse(localStorage.getItem(KEY)) || structuredClone(DEFAULT); } catch { S = structuredClone(DEFAULT); }
+const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+
+let tab = 'A', selMode = false, selected = new Set(), editId = null, pickedCat = null;
+
+// local-date helpers (avoid UTC off-by-one)
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const today = () => ymd(new Date());
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return ymd(d); };
+const curMonth = () => today().slice(0, 7);
+
+// ================= Firebase sync (optional) =================
+let fb = null, user = null, unsubs = [], pending = false;
+const cfg = window.FIREBASE_CONFIG;
+if (window.firebase && cfg && cfg.apiKey) {
+  try {
+    firebase.initializeApp(cfg);
+    fb = { auth: firebase.auth(), db: firebase.firestore() };
+    fb.db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  } catch (e) { fb = null; }
+}
+const col = n => fb.db.collection('users').doc(user.uid).collection(n);
+const syncing = () => !!(fb && user);
+const noop = () => {};
+const pPayload = p => ({ cat: p.cat, price: p.price, date: p.date, note: p.note || '' });
+const cPayload = (c, i) => ({ name: c.name, icon: c.icon, color: c.color, budget: c.budget, order: i });
+
+function pushPurchase(p){ if (syncing()) col('purchases').doc(p.id).set(pPayload(p)).catch(noop); }
+function removePurchases(ids){ if (!syncing() || !ids.length) return; const b = fb.db.batch(); ids.forEach(i => b.delete(col('purchases').doc(i))); b.commit().catch(noop); }
+function pushCategories(cats, removedIds){
+  if (!syncing()) return;
+  const b = fb.db.batch();
+  cats.forEach((c, i) => b.set(col('categories').doc(c.id), cPayload(c, i)));
+  removedIds.forEach(id => b.delete(col('categories').doc(id)));
+  b.commit().catch(noop);
+}
+
+function startSync(){
+  stopSync();
+  const kc = 'fin-seed-c-' + user.uid, kp = 'fin-seed-p-' + user.uid;
+  unsubs.push(col('categories').onSnapshot({ includeMetadataChanges: true }, snap => {
+    if (!snap.metadata.fromCache && snap.empty && !localStorage.getItem(kc)) {
+      localStorage.setItem(kc, '1');
+      if (S.categories.length) { pushCategories(S.categories, []); return; }
+    }
+    if (!snap.metadata.fromCache) localStorage.setItem(kc, '1');
+    S.categories = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order || 0) - (b.order || 0));
+    pending = snap.metadata.hasPendingWrites; save(); render(); updSyncUI();
+  }, noop));
+  unsubs.push(col('purchases').onSnapshot({ includeMetadataChanges: true }, snap => {
+    if (!snap.metadata.fromCache && snap.empty && !localStorage.getItem(kp)) {
+      localStorage.setItem(kp, '1');
+      if (S.purchases.length) { const b = fb.db.batch(); S.purchases.forEach(p => b.set(col('purchases').doc(p.id), pPayload(p))); b.commit().catch(noop); return; }
+    }
+    if (!snap.metadata.fromCache) localStorage.setItem(kp, '1');
+    S.purchases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    pending = snap.metadata.hasPendingWrites; save(); render(); updSyncUI();
+  }, noop));
+}
+function stopSync(){ unsubs.forEach(u => u()); unsubs = []; }
+
+function updSyncUI(){
+  let txt, color;
+  if (!fb) { txt = 'Synchronisation non configurée : les données restent sur cet appareil.'; color = '#666'; }
+  else if (!user) { txt = 'Non connecté. Connectez-vous pour synchroniser vos données entre appareils.'; color = '#666'; }
+  else if (!navigator.onLine) { txt = 'Connecté : ' + user.email + '\nHors ligne : vos changements seront envoyés au retour de la connexion.'; color = 'var(--amber)'; }
+  else if (pending) { txt = 'Connecté : ' + user.email + '\nSynchronisation en cours…'; color = 'var(--amber)'; }
+  else { txt = 'Connecté : ' + user.email + '\nSynchronisé ✓'; color = 'var(--green)'; }
+  $('#syncTxt').innerText = txt; $('#dot').style.background = color;
+  $('#authBox').style.display = fb && !user ? '' : 'none';
+  $('#outBox').style.display = fb && user ? '' : 'none';
+}
+window.addEventListener('online', updSyncUI); window.addEventListener('offline', updSyncUI);
+
+const AUTH_ERR = {
+  'auth/invalid-credential':'Email ou mot de passe incorrect', 'auth/wrong-password':'Email ou mot de passe incorrect', 'auth/user-not-found':'Email ou mot de passe incorrect',
+  'auth/email-already-in-use':'Ce compte existe déjà : utilisez « Se connecter »', 'auth/weak-password':'Mot de passe trop court (6 caractères min.)',
+  'auth/invalid-email':'Email invalide', 'auth/network-request-failed':'Pas de connexion internet', 'auth/too-many-requests':'Trop d\'essais, réessayez plus tard',
+  'auth/operation-not-allowed':'Activez Email/Mot de passe dans Firebase'
+};
+async function doAuth(create){
+  const email = $('#aEmail').value.trim(), pass = $('#aPass').value;
+  if (!email || !pass) return toast('Entrez email et mot de passe');
+  try { create ? await fb.auth.createUserWithEmailAndPassword(email, pass) : await fb.auth.signInWithEmailAndPassword(email, pass); $('#aPass').value=''; hide('#ovMenu'); toast('Connecté'); }
+  catch (e) { toast(AUTH_ERR[e.code] || e.code || 'Erreur'); }
+}
+$('#aIn').onclick = () => doAuth(false);
+$('#aUp').onclick = () => doAuth(true);
+$('#aOut').onclick = async () => {
+  if (!confirm('Se déconnecter ? Les données locales de cet appareil seront effacées (elles restent dans votre compte).')) return;
+  stopSync(); await fb.auth.signOut(); S = structuredClone(DEFAULT); save(); hide('#ovMenu'); render();
+};
+if (fb) fb.auth.onAuthStateChanged(u => { user = u; if (u) startSync(); else stopSync(); updSyncUI(); });
+
+// ================= UI =================
+const catOf = id => S.categories.find(c => c.id === id) || {name:'(supprimée)', icon:'❔', color:'#888', budget:0};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => { const r = Math.round(n*100)/100; return (r<0?'-':'') + S.currency + (Number.isInteger(r) ? Math.abs(r) : Math.abs(r).toFixed(2).replace(/0$/,'')); };
+const buzz = () => { try { navigator.vibrate && navigator.vibrate(12); } catch {} };
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+const inMonth = p => p.date.startsWith(curMonth());
+
+function dayLabel(d){
+  if (d === today()) return "Aujourd'hui";
+  if (d === daysAgo(1)) return 'Hier';
+  const dt = new Date(d + 'T12:00:00'), sameYear = d.slice(0,4) === today().slice(0,4);
+  return dt.toLocaleDateString('fr-FR', sameYear ? { weekday:'long', day:'numeric', month:'long' } : { day:'numeric', month:'long', year:'numeric' });
+}
+
+function renderBuy(){
+  const list = [...S.purchases].sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const total = S.purchases.filter(inMonth).reduce((s,p)=>s+p.price,0);
+  const days = [6,5,4,3,2,1,0].map(n => { const d = daysAgo(n); return S.purchases.filter(p=>p.date===d).reduce((s,p)=>s+p.price,0); });
+  const mx = Math.max(...days, 1);
+  const hero = `<section class="hero"><div><small>ce mois-ci</small><div class="big">${fmt(total)}</div></div><div class="spark">${days.map((v,i)=>`<i style="height:${Math.max(8, v/mx*100)}%;animation-delay:${i*60}ms"></i>`).join('')}</div></section>`;
+  if (!list.length){ $('#main').innerHTML = hero + '<div class="empty"><div class="e">🧾</div>Aucun achat pour le moment.<br>Appuyez sur + pour commencer.</div>'; return; }
+  let html = hero, last = '', n = 0;
+  list.forEach(p => {
+    if (p.date !== last){
+      last = p.date;
+      const dayTotal = list.filter(x=>x.date===p.date).reduce((s,x)=>s+x.price,0);
+      html += `<div class="day"><span>${esc(dayLabel(p.date))}</span><span>${fmt(dayTotal)}</span></div>`;
+    }
+    const c = catOf(p.cat);
+    html += `<div class="item" data-id="${p.id}" style="--c:${c.color};animation-delay:${Math.min(n++,10)*35}ms">${selMode?`<span class="ck ${selected.has(p.id)?'on':''}"></span>`:''}<span class="chip">${c.icon}</span><div class="meta"><b>${esc(c.name)}</b>${p.note?`<small>${esc(p.note)}</small>`:''}</div><span class="amt">${fmt(p.price)}</span></div>`;
+  });
+  $('#main').innerHTML = html;
+  document.querySelectorAll('.item').forEach(el => el.onclick = () => {
+    const id = el.dataset.id;
+    if (selMode){ selected.has(id)?selected.delete(id):selected.add(id); buzz(); renderBuy(); updSel(); }
+    else openBuy(id);
+  });
+}
+
+const spentBy = id => S.purchases.filter(p => p.cat===id && inMonth(p)).reduce((s,p)=>s+p.price,0);
+function renderBudget(){
+  let tb = 0, ts = 0;
+  const cards = S.categories.map((c, i) => {
+    const b = c.budget, s = spentBy(c.id), r = b - s; tb += b; ts += s;
+    const pct = b > 0 ? Math.min(100, s / b * 100) : (s > 0 ? 100 : 0);
+    return `<div class="bc" style="--c:${c.color};animation-delay:${i*45}ms"><span class="chip">${c.icon}</span><div class="bm"><div class="bt"><b>${esc(c.name)}</b><span class="${r<=0?'neg':''}">${fmt(r)}</span></div><div class="bar"><i class="${s>b?'over':''}" style="width:${pct}%"></i></div><small>${fmt(s)} / ${fmt(b)}</small></div></div>`;
+  }).join('');
+  const rem = tb - ts, pct = tb > 0 ? Math.min(100, ts / tb * 100) : 0, off = 276.46 * (1 - pct / 100);
+  const ring = `<section class="ringbox"><div class="ring"><svg viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d8dff"/><stop offset="1" stop-color="#b06bff"/></linearGradient></defs><circle class="t" cx="50" cy="50" r="44"/><circle class="p" cx="50" cy="50" r="44" style="stroke-dashoffset:${off}"/></svg><span>${Math.round(pct)}%</span></div><div class="rb"><small>reste</small><div class="big ${rem<0?'neg':''}">${fmt(rem)}</div><div class="sub">sur ${fmt(tb)}</div></div></section>`;
+  $('#main').innerHTML = ring + cards;
+}
+
+function render(anim){
+  const isA = tab==='A';
+  $('#title').textContent = isA ? 'Achats' : 'Budget';
+  $('#tabA').classList.toggle('on', isA); $('#tabB').classList.toggle('on', !isA);
+  $('#fab').style.display = isA && !selMode ? '' : 'none';
+  $('#selBtn').style.display = isA ? '' : 'none';
+  $('#penBtn').style.display = isA ? 'none' : '';
+  $('#main').classList.toggle('anim', anim === true);
+  isA ? renderBuy() : renderBudget();
+  updSel();
+}
+function updSel(){ $('#selBar').style.display = selMode && tab==='A' ? 'flex' : 'none'; $('#selCount').textContent = selected.size + ' sélectionné' + (selected.size>1?'s':''); }
+
+const show = id => $(id).classList.add('show'), hide = id => $(id).classList.remove('show');
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('.overlay').classList.remove('show'));
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); }));
+
+// ---- purchase form
+function openBuy(id){
+  editId = id || null;
+  const p = id ? S.purchases.find(x=>x.id===id) : null;
+  pickedCat = p ? p.cat : null;
+  $('#buyTitle').textContent = id ? 'Modifier' : 'Nouvel achat';
+  $('#price').value = p ? p.price : '';
+  $('#note').value = p ? (p.note||'') : '';
+  $('#buyDel').style.display = id ? '' : 'none';
+  $('#cur1').textContent = S.currency;
+  drawCatBtns(); show('#ovBuy');
+}
+function drawCatBtns(){
+  $('#catBtns').innerHTML = S.categories.map(c => `<button class="cb ${pickedCat===c.id?'on':''}" data-id="${c.id}" style="--c:${c.color}"><span class="chip">${c.icon}</span><span class="n">${esc(c.name)}</span></button>`).join('');
+  document.querySelectorAll('.cb').forEach(b => b.onclick = () => { pickedCat = b.dataset.id; buzz(); drawCatBtns(); });
+}
+$('#buySave').onclick = () => {
+  const price = parseFloat($('#price').value);
+  if (isNaN(price) || price < 0) return toast('Entrez un prix valide');
+  if (!pickedCat) return toast('Choisissez une catégorie');
+  const date = editId ? S.purchases.find(x=>x.id===editId).date : today();
+  const note = $('#note').value.trim();
+  let p;
+  if (editId){ p = S.purchases.find(x=>x.id===editId); Object.assign(p, {cat:pickedCat, price, date, note}); }
+  else { p = {id:uid(), cat:pickedCat, price, date, note}; S.purchases.push(p); }
+  save(); pushPurchase(p); hide('#ovBuy'); render(); buzz(); toast('Enregistré ✓');
+};
+$('#buyDel').onclick = () => { if (confirm('Supprimer cet achat ?')){ const id = editId; S.purchases = S.purchases.filter(p=>p.id!==id); save(); removePurchases([id]); hide('#ovBuy'); render(); } };
+
+// ---- categories editor (Budget tab only)
+let draft = [];
+function openCats(){ draft = structuredClone(S.categories); drawCatRows(); show('#ovCats'); }
+function drawCatRows(){
+  $('#catRows').innerHTML = draft.map((c,i) => `<div class="ed" data-i="${i}"><input data-f="icon" value="${esc(c.icon)}" maxlength="4" style="text-align:center;font-size:22px"><input data-f="name" value="${esc(c.name)}"><input data-f="budget" type="number" inputmode="decimal" value="${c.budget}"><input data-f="color" type="color" value="${c.color}"><button class="ib" data-rm="${i}">✕</button></div>`).join('');
+  document.querySelectorAll('.ed input').forEach(inp => inp.oninput = () => { const d = draft[inp.closest('.ed').dataset.i]; d[inp.dataset.f] = inp.dataset.f==='budget' ? (parseFloat(inp.value)||0) : inp.value; });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { draft.splice(+b.dataset.rm,1); drawCatRows(); });
+}
+$('#addCat').onclick = () => { draft.push({id:uid(), name:'Nouvelle', icon:'🛒', color:'#8ec5ff', budget:0}); drawCatRows(); };
+$('#catsSave').onclick = () => {
+  if (draft.some(c=>!c.name.trim())) return toast('Chaque catégorie doit avoir un nom');
+  const removed = S.categories.filter(c => !draft.find(d=>d.id===c.id)).map(c=>c.id);
+  const orphan = S.purchases.filter(p => removed.includes(p.cat)).map(p => p.id);
+  if (orphan.length && !confirm('Des achats utilisent une catégorie supprimée. Les supprimer aussi ?')) return;
+  S.purchases = S.purchases.filter(p => !orphan.includes(p.id));
+  S.categories = draft; save();
+  removePurchases(orphan); pushCategories(draft, removed);
+  hide('#ovCats'); render(true); toast('Enregistré ✓');
+};
+
+// ---- header / nav
+$('#tabA').onclick = () => { if (tab!=='A'){ tab='A'; buzz(); render(true); $('#main').scrollTop = 0; } };
+$('#tabB').onclick = () => { if (tab!=='B'){ tab='B'; selMode=false; selected.clear(); buzz(); render(true); $('#main').scrollTop = 0; } };
+$('#fab').onclick = () => openBuy();
+$('#penBtn').onclick = openCats;
+$('#refBtn').onclick = () => { render(true); updSyncUI(); toast('Actualisé'); };
+$('#selBtn').onclick = () => { selMode=!selMode; selected.clear(); render(); };
+$('#selDel').onclick = () => { if(!selected.size) return; if(confirm(`Supprimer ${selected.size} achat(s) ?`)){ const ids=[...selected]; S.purchases = S.purchases.filter(p=>!selected.has(p.id)); selected.clear(); selMode=false; save(); removePurchases(ids); render(); } };
+// ---- install as app (Android Chrome)
+let deferredPrompt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+function updInstallUI(){ $('#installBox').style.display = isStandalone() ? 'none' : ''; }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; $('#installHint').style.display = 'none'; });
+window.addEventListener('appinstalled', () => { deferredPrompt = null; updInstallUI(); hide('#ovMenu'); toast('Application installée ✓'); });
+$('#installBtn').onclick = async () => {
+  if (deferredPrompt) { deferredPrompt.prompt(); try { await deferredPrompt.userChoice; } catch {} deferredPrompt = null; return; }
+  const hint = $('#installHint');
+  hint.textContent = isIOS
+    ? "Sur iPhone (Safari) : bouton Partager → « Sur l'écran d'accueil ». L'app s'ouvrira en plein écran."
+    : "Dans Chrome : menu ⋮ → « Installer l'application » (PAS « Ajouter à l'écran d'accueil », qui crée seulement un raccourci avec la barre du navigateur). Si vous ne voyez pas « Installer l'application », ouvrez le lien https avec Chrome, attendez quelques secondes et réessayez.";
+  hint.style.display = '';
+};
+$('#menuBtn').onclick = () => { updInstallUI(); updSyncUI(); show('#ovMenu'); };
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+render(true); updSyncUI();
+</script>
+</body>
+</html>
