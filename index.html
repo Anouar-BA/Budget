@@ -26,6 +26,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
   radial-gradient(480px 360px at -10% 35%,#b06bff22,transparent 70%),
   radial-gradient(500px 400px at 100% 100%,#34d39914,transparent 70%)}
 button,input{font-family:inherit}
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+img,svg{-webkit-user-drag:none;user-drag:none}
 #app{display:flex;flex-direction:column;height:100%;max-width:560px;margin:0 auto;position:relative}
 
 /* header */
@@ -235,9 +238,13 @@ const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(
 const DEFAULT = {
   currency: '$',
   categories: [
-    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:0},
-    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:0},
-    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:0}
+    {id:'magasin', name:'Magasin', icon:'🏪', color:'#f5a142', budget:350},
+    {id:'viandes', name:'Viandes', icon:'🥩', color:'#ff453a', budget:250},
+    {id:'legumes', name:'Légumes', icon:'🌶️', color:'#22d55b', budget:140},
+    {id:'yoyo', name:'Yoyo Hygiène', icon:'🍼', color:'#f5d142', budget:200},
+    {id:'anouar', name:'Anouar', icon:'⭐', color:'#2f80ed', budget:100},
+    {id:'essence', name:'Essence', icon:'🚗', color:'#1fc8b4', budget:60},
+    {id:'famille', name:'Famille', icon:'👪', color:'#e94fd0', budget:200}
   ],
   purchases: []
 };
