@@ -211,6 +211,7 @@ input[type=date]{color-scheme:dark}
     <button class="btn wide" id="diagBtn">Vérifier pourquoi l'installation échoue</button>
     <p class="hint" id="installHint" style="display:none"></p>
   </div>
+  <button class="btn del wide" id="resetBtn" style="margin-top:12px">🗑 Remettre les achats à zéro</button>
   <p class="hint" id="syncTxt" style="margin-top:18px"></p>
   <div id="authBox">
     <input class="fi" id="aEmail" type="email" placeholder="Email" autocomplete="username">
@@ -277,7 +278,10 @@ const pPayload = p => ({ cat: p.cat, price: p.price, date: p.date, note: p.note 
 const cPayload = (c, i) => ({ name: c.name, icon: c.icon, color: c.color, budget: c.budget, order: i });
 
 function pushPurchase(p){ if (syncing()) col('purchases').doc(p.id).set(pPayload(p)).catch(noop); }
-function removePurchases(ids){ if (!syncing() || !ids.length) return; const b = fb.db.batch(); ids.forEach(i => b.delete(col('purchases').doc(i))); b.commit().catch(noop); }
+function removePurchases(ids){
+  if (!syncing() || !ids.length) return;
+  for (let i = 0; i < ids.length; i += 400){ const b = fb.db.batch(); ids.slice(i, i + 400).forEach(x => b.delete(col('purchases').doc(x))); b.commit().catch(noop); }
+}
 function pushCategories(cats, removedIds){
   if (!syncing()) return;
   const b = fb.db.batch();
@@ -543,6 +547,15 @@ $('#diagBtn').onclick = async () => {
   try { const regs = await navigator.serviceWorker.getRegistrations(); ok(regs.length > 0, 'sw.js (service worker actif)'); } catch { ok(false, 'sw.js (service worker)'); }
   out.push(out.some(l => l.startsWith('❌')) ? "\n❌ = fichier manquant ou mal nommé dans votre dépôt GitHub : ajoutez-le avec exactement ce nom." : "\nTout est OK : fermez Chrome, rouvrez le lien et réessayez.");
   hint.textContent = out.join('\n');
+};
+$('#resetBtn').onclick = () => {
+  const n = S.purchases.length;
+  if (!n) return toast('Aucun achat à effacer');
+  hide('#ovMenu');
+  askDelete('Remettre à zéro ?', `Les ${n} achat(s) seront supprimés${syncing() ? ' sur tous vos appareils' : ''}. Vos catégories et budgets restent. Cette action est irréversible.`, () => {
+    const ids = S.purchases.map(p => p.id);
+    S.purchases = []; selected.clear(); selMode = false; save(); removePurchases(ids); render(); toast('Achats remis à zéro');
+  });
 };
 $('#menuBtn').onclick = () => { updInstallUI(); updSyncUI(); show('#ovMenu'); };
 
